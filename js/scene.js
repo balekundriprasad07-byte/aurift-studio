@@ -1,188 +1,142 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
 
-    const canvas=document.querySelector("#hero-canvas");
+const canvas = document.querySelector("#hero-canvas");
 
-    if(canvas){
-      const scene=new THREE.Scene();
-      const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);
-      camera.position.set(0,0,6.2);
+if (canvas) {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const isMobile = window.matchMedia("(max-width: 800px)").matches;
 
-      const renderer=new THREE.WebGLRenderer({
-        canvas,
-        alpha:true,
-        antialias:true
-      });
-      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      renderer.setSize(innerWidth,innerHeight);
-      renderer.outputColorSpace=THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.z = 6;
 
-      /* -------------------------
-         CUSTOM FLOWING RIBBON
-      ------------------------- */
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
+  const maxPixelRatio = isMobile ? 1.25 : 2;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setAnimationLoop(null);
 
-      const segments=220;
-      const width=.52;
-      const positions=[];
-      const uvs=[];
-      const indices=[];
+  // Fewer geometry segments on mobile reduce GPU/CPU work with almost no visual loss.
+  const geometry = new THREE.TorusKnotGeometry(1.05, 0.3, isMobile ? 96 : 180, isMobile ? 20 : 32);
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x202020,
+    metalness: 0.95,
+    roughness: 0.22,
+    clearcoat: 1,
+    clearcoatRoughness: 0.15,
+  });
 
-      function centerPoint(t){
-        const a=t*Math.PI*1.8;
-        return new THREE.Vector3(
-          Math.sin(a)*1.55,
-          Math.sin(a*1.32)*.72 + Math.cos(a*.58)*.18,
-          Math.cos(a*.86)*.78
-        );
-      }
+  const object = new THREE.Mesh(geometry, material);
+  object.position.set(1.45, 0, 0);
+  object.rotation.set(0.5, 0.4, 0);
+  scene.add(object);
 
-      for(let i=0;i<=segments;i++){
-        const t=i/segments;
-        const tPrev=Math.max(0,t-1/segments);
-        const tNext=Math.min(1,t+1/segments);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 5);
+  keyLight.position.set(4, 4, 6);
+  scene.add(keyLight);
 
-        const c=centerPoint(t);
-        const p0=centerPoint(tPrev);
-        const p1=centerPoint(tNext);
+  const rimLight = new THREE.DirectionalLight(0x777777, 4);
+  rimLight.position.set(-4, -2, -2);
+  scene.add(rimLight);
 
-        const tangent=p1.clone().sub(p0).normalize();
+  const softLight = new THREE.PointLight(0xffffff, 8, 15);
+  softLight.position.set(0, 1, 3);
+  scene.add(softLight);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-        let side=new THREE.Vector3(0,1,0).cross(tangent);
-        if(side.lengthSq()<.0001){
-          side=new THREE.Vector3(1,0,0);
-        }
-        side.normalize();
+  let mouseX = 0;
+  let mouseY = 0;
+  let scrollY = window.scrollY;
+  let frameId = null;
+  const clock = new THREE.Clock();
 
-        const twist=(t-.5)*Math.PI*3.2 + Math.sin(t*Math.PI*2)*.42;
-        const q=new THREE.Quaternion().setFromAxisAngle(tangent,twist);
-        side.applyQuaternion(q).normalize();
+  if (finePointer && !reduceMotion) {
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        mouseX = event.clientX / window.innerWidth - 0.5;
+        mouseY = event.clientY / window.innerHeight - 0.5;
+      },
+      { passive: true }
+    );
+  }
 
-        const taper=.72 + Math.sin(t*Math.PI)*.34;
-        const half=width*.5*taper;
+  window.addEventListener(
+    "scroll",
+    () => {
+      scrollY = window.scrollY;
+    },
+    { passive: true }
+  );
 
-        const left=c.clone().add(side.clone().multiplyScalar(half));
-        const right=c.clone().add(side.clone().multiplyScalar(-half));
+  const renderStaticFrame = () => {
+    object.rotation.set(0.5, 0.4, 0);
+    object.position.set(1.45, 0, 0);
+    renderer.render(scene, camera);
+  };
 
-        positions.push(left.x,left.y,left.z,right.x,right.y,right.z);
-        uvs.push(0,t,1,t);
-      }
-
-      for(let i=0;i<segments;i++){
-        const a=i*2;
-        const b=a+1;
-        const c=a+2;
-        const d=a+3;
-
-        indices.push(a,b,c);
-        indices.push(b,d,c);
-      }
-
-      const ribbonGeometry=new THREE.BufferGeometry();
-      ribbonGeometry.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(positions,3)
-      );
-      ribbonGeometry.setAttribute(
-        "uv",
-        new THREE.Float32BufferAttribute(uvs,2)
-      );
-      ribbonGeometry.setIndex(indices);
-      ribbonGeometry.computeVertexNormals();
-
-      const ribbonMaterial=new THREE.MeshPhysicalMaterial({
-        color:0x111111,
-        metalness:1,
-        roughness:.18,
-        clearcoat:1,
-        clearcoatRoughness:.1,
-        side:THREE.DoubleSide
-      });
-
-      const ribbon=new THREE.Mesh(ribbonGeometry,ribbonMaterial);
-      ribbon.position.set(.72,.02,0);
-      ribbon.rotation.set(-.12,.28,-.18);
-      ribbon.scale.setScalar(1.02);
-      scene.add(ribbon);
-
-      /* faint secondary ribbon for depth */
-      const ribbon2=new THREE.Mesh(
-        ribbonGeometry.clone(),
-        new THREE.MeshPhysicalMaterial({
-          color:0x080808,
-          metalness:.92,
-          roughness:.32,
-          clearcoat:.7,
-          side:THREE.DoubleSide,
-          transparent:true,
-          opacity:.42
-        })
-      );
-      ribbon2.position.set(.98,-.18,-.9);
-      ribbon2.rotation.set(.18,-.55,.3);
-      ribbon2.scale.setScalar(.64);
-      scene.add(ribbon2);
-
-      /* LIGHTING */
-      const key=new THREE.DirectionalLight(0xffffff,5.8);
-      key.position.set(4,5,7);
-      scene.add(key);
-
-      const rim=new THREE.DirectionalLight(0xffffff,3.2);
-      rim.position.set(-5,-1,-4);
-      scene.add(rim);
-
-      const topLight=new THREE.PointLight(0xffffff,10,14);
-      topLight.position.set(1.5,3.5,4);
-      scene.add(topLight);
-
-      const sideLight=new THREE.PointLight(0x777777,6,12);
-      sideLight.position.set(-2,-2,3);
-      scene.add(sideLight);
-
-      scene.add(new THREE.AmbientLight(0xffffff,.27));
-
-      let mx=0,my=0,sy=scrollY;
-
-      addEventListener("mousemove",e=>{
-        mx=e.clientX/innerWidth-.5;
-        my=e.clientY/innerHeight-.5;
-      });
-
-      addEventListener("scroll",()=>{
-        sy=scrollY;
-      });
-
-      const clock=new THREE.Clock();
-
-      function animate(){
-        const t=clock.getElapsedTime();
-        const p=Math.min(sy/innerHeight,1);
-
-        ribbon.rotation.y=.28 + Math.sin(t*.33)*.08 + mx*.22 + p*.42;
-        ribbon.rotation.x=-.12 + my*.14 - p*.08;
-        ribbon.rotation.z=-.18 + Math.sin(t*.28)*.055;
-
-        ribbon.position.x+=(.72 + mx*.16 + p*.22 - ribbon.position.x)*.035;
-        ribbon.position.y+=(.02 - my*.07 - p*.11 - ribbon.position.y)*.035;
-        ribbon.position.z=-p*.35;
-
-        const scale=1.02 - p*.10;
-        ribbon.scale.setScalar(scale);
-
-        ribbon2.rotation.y=-.55 - Math.sin(t*.25)*.06 - mx*.12;
-        ribbon2.rotation.z=.3 + Math.cos(t*.22)*.05;
-        ribbon2.position.y=-.28 + Math.sin(t*.5)*.04;
-
-        renderer.render(scene,camera);
-        requestAnimationFrame(animate);
-      }
-
-      animate();
-
-      addEventListener("resize",()=>{
-        camera.aspect=innerWidth/innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(innerWidth,innerHeight);
-        renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      });
+  const animate = () => {
+    if (document.hidden) {
+      frameId = null;
+      return;
     }
+
+    const elapsed = clock.getElapsedTime();
+    const interactionX = finePointer ? mouseX : 0;
+    const interactionY = finePointer ? mouseY : 0;
+
+    object.rotation.x = elapsed * 0.08 + interactionY * 0.4;
+    object.rotation.y = elapsed * 0.12 + interactionX * 0.6;
+    object.rotation.z = elapsed * 0.04;
+    object.position.y = Math.sin(elapsed * 0.7) * 0.08;
+    object.position.x += (1.45 + interactionX * 0.25 - object.position.x) * 0.03;
+
+    const scrollProgress = Math.min(scrollY / window.innerHeight, 1);
+    object.scale.setScalar(1 - scrollProgress * 0.25);
+    object.rotation.z += scrollProgress * 0.002;
+
+    renderer.render(scene, camera);
+    frameId = requestAnimationFrame(animate);
+  };
+
+  const startRendering = () => {
+    if (reduceMotion) {
+      renderStaticFrame();
+      return;
+    }
+    if (!frameId) {
+      clock.start();
+      frameId = requestAnimationFrame(animate);
+    }
+  };
+
+  startRendering();
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && frameId) {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+      clock.stop();
+    } else if (!document.hidden) {
+      startRendering();
+    }
+  });
+
+  let resizeFrame = null;
+  window.addEventListener(
+    "resize",
+    () => {
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+        if (reduceMotion) renderStaticFrame();
+        resizeFrame = null;
+      });
+    },
+    { passive: true }
+  );
+}
