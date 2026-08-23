@@ -1110,3 +1110,75 @@
     transform: none !important;
   }
 }
+
+
+/* Issue #2 — accessibility and keyboard navigation */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10000;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fff;
+  color: #050505;
+  font-weight: 700;
+  transform: translateY(-180%);
+  transition: transform .2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.nav-button:focus-visible,
+.project-link:focus-visible,
+.price-cta:focus-visible,
+.form-submit:focus-visible,
+.contact-action:focus-visible {
+  box-shadow: 0 0 0 5px rgba(255,255,255,.16);
+}
+
+.project-link-disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.faq-question[aria-expanded="true"] .faq-icon {
+  transform: rotate(45deg);
+}
+
+.faq-answer[hidden] {
+  display: none !important;
+}
+
+@media (prefers-contrast: more) {
+  body { color: #fff; }
+  .hero-description,
+  .services-copy,
+  .process-copy,
+  .faq-copy,
+  .contact-intro { color: #c8c8c8; }
+}
