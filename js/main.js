@@ -105,3 +105,46 @@ if (finePointer && !reduceMotion) {
   if (glow) glow.hidden = true;
   if (heroContent) heroContent.style.transform = "none";
 }
+
+
+// Issue #2 — accessible navigation and FAQ behaviour
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.getElementById("navLinks");
+
+if (menuToggle && navLinks) {
+  const closeMenu = () => {
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation");
+    navLinks.classList.remove("open");
+  };
+
+  menuToggle.addEventListener("click", () => {
+    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute("aria-expanded", String(!isOpen));
+    menuToggle.setAttribute("aria-label", isOpen ? "Open navigation" : "Close navigation");
+    navLinks.classList.toggle("open", !isOpen);
+  });
+
+  navLinks.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") {
+      closeMenu();
+      menuToggle.focus();
+    }
+  });
+}
+
+document.querySelectorAll(".faq-question").forEach((button) => {
+  const answerId = button.getAttribute("aria-controls");
+  const answer = answerId ? document.getElementById(answerId) : null;
+  if (!answer) return;
+
+  button.addEventListener("click", () => {
+    const expanded = button.getAttribute("aria-expanded") === "true";
+    button.setAttribute("aria-expanded", String(!expanded));
+    answer.hidden = expanded;
+  });
+});
