@@ -11,13 +11,14 @@
 
 <link href="css/style.css" rel="stylesheet"/></head>
 <body>
-<div class="cursor-glow"></div>
-<div class="noise"></div>
-<div class="cinema-dot"></div>
-<nav id="navbar">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div aria-hidden="true" class="cursor-glow"></div>
+<div aria-hidden="true" class="noise"></div>
+<div aria-hidden="true" class="cinema-dot"></div>
+<nav aria-label="Primary navigation" id="navbar">
 <div class="container navbar">
-<a class="logo" href="#">AURIFT<span class="degree">°</span></a>
-<button aria-label="Open navigation" class="menu-toggle" id="menuToggle">☰</button>
+<a aria-label="Aurift Studio home" class="logo" href="#">AURIFT<span class="degree">°</span></a>
+<button aria-controls="navLinks" aria-expanded="false" aria-label="Open navigation" class="menu-toggle" id="menuToggle" type="button">☰</button>
 <div class="nav-links" id="navLinks">
 <a href="#services">Services</a>
 <a href="#work">Work</a>
@@ -28,8 +29,8 @@
 </div>
 </div>
 </nav>
-<main class="hero" id="hero">
-<div class="hero-canvas-wrap"><canvas id="hero-canvas"></canvas></div>
+<main class="hero" id="main-content" tabindex="-1">
+<div aria-hidden="true" class="hero-canvas-wrap"><canvas aria-hidden="true" id="hero-canvas" role="presentation"></canvas></div>
 <div class="hero-center-label">SHIFT / FORM / MOTION</div>
 <div class="container hero-content">
 <div class="hero-meta">
@@ -37,14 +38,15 @@
 <span>DIGITAL EXPERIENCES / 2026</span>
 </div>
 <div class="hero-main">
-<h1 class="hero-title hero-title-top">
+<h1 class="sr-only">We don’t just build websites. We shift brands forward.</h1>
+<div aria-hidden="true" class="hero-title hero-title-top">
 <span class="hero-word">WE DON'T JUST</span>
 <span class="hero-word">BUILD WEBSITES.</span>
-</h1>
-<h1 class="hero-title hero-title-bottom">
+</div>
+<div aria-hidden="true" class="hero-title hero-title-bottom">
 <span class="hero-word muted-word">WE SHIFT</span>
 <span class="hero-word">BRANDS FORWARD.</span>
-</h1>
+</div>
 </div>
 <div class="hero-footer">
 <p class="hero-description">
@@ -53,7 +55,7 @@
         </p>
 <a class="explore" href="#services">
           Scroll to explore
-          <span class="circle">↓</span>
+          <span aria-hidden="true" class="circle">↓</span>
 </a>
 </div>
 </div>
@@ -95,19 +97,19 @@
 <div class="services-grid">
 <div class="service">
 <span class="service-number">01</span>
-<span class="service-arrow">↗</span>
+<span aria-hidden="true" class="service-arrow">↗</span>
 <h3>Web Design</h3>
 <p>Clear, modern interfaces shaped around your business, customers and goals.</p>
 </div>
 <div class="service">
 <span class="service-number">02</span>
-<span class="service-arrow">↗</span>
+<span aria-hidden="true" class="service-arrow">↗</span>
 <h3>Development</h3>
 <p>Responsive, lightweight websites designed to work smoothly across devices.</p>
 </div>
 <div class="service">
 <span class="service-number">03</span>
-<span class="service-arrow">↗</span>
+<span aria-hidden="true" class="service-arrow">↗</span>
 <h3>Digital Presence</h3>
 <p>A stronger online first impression that helps your business build trust faster.</p>
 </div>
@@ -205,9 +207,7 @@
 <p class="project-type">Automotive / Concept 03</p>
 <h3>REVLINE°</h3>
 </div>
-<a class="project-link" href="">
-  View Concept ↗
-</a>
+<span aria-disabled="true" class="project-link project-link-disabled">Concept coming soon</span>
 </div></article>
 </div>
 </div>
@@ -330,47 +330,47 @@
 </div>
 <div class="faq-list">
 <div class="faq-item">
-<button class="faq-question" type="button">
+<button aria-controls="faq-answer-1" aria-expanded="false" class="faq-question" id="faq-question-1" type="button">
 <span>How long does a website take?</span>
 <span class="faq-icon">+</span>
 </button>
-<div class="faq-answer">
+<div aria-labelledby="faq-question-1" class="faq-answer" hidden id="faq-answer-1" role="region">
 <p>A straightforward business website can often be completed in roughly 1–3 weeks once the required content and feedback are available. More custom functionality or advanced animation can take longer.</p>
 </div>
 </div>
 <div class="faq-item">
-<button class="faq-question" type="button">
+<button aria-controls="faq-answer-2" aria-expanded="false" class="faq-question" id="faq-question-2" type="button">
 <span>Are domain and hosting included?</span>
 <span class="faq-icon">+</span>
 </button>
-<div class="faq-answer">
+<div aria-labelledby="faq-question-2" class="faq-answer" hidden id="faq-answer-2" role="region">
 <p>They are handled separately unless specifically included in the final quote. This keeps ownership and ongoing costs clear instead of hiding them inside the website price.</p>
 </div>
 </div>
 <div class="faq-item">
-<button class="faq-question" type="button">
+<button aria-controls="faq-answer-3" aria-expanded="false" class="faq-question" id="faq-question-3" type="button">
 <span>Can you redesign an existing website?</span>
 <span class="faq-icon">+</span>
 </button>
-<div class="faq-answer">
+<div aria-labelledby="faq-question-3" class="faq-answer" hidden id="faq-answer-3" role="region">
 <p>Yes. A redesign can keep useful existing content while improving the structure, visual quality, mobile experience and customer journey.</p>
 </div>
 </div>
 <div class="faq-item">
-<button class="faq-question" type="button">
+<button aria-controls="faq-answer-4" aria-expanded="false" class="faq-question" id="faq-question-4" type="button">
 <span>Will the website work on phones?</span>
 <span class="faq-icon">+</span>
 </button>
-<div class="faq-answer">
+<div aria-labelledby="faq-question-4" class="faq-answer" hidden id="faq-answer-4" role="region">
 <p>Yes. Responsive behaviour is part of every package because many local customers will discover and open a business website from their phone first.</p>
 </div>
 </div>
 <div class="faq-item">
-<button class="faq-question" type="button">
+<button aria-controls="faq-answer-5" aria-expanded="false" class="faq-question" id="faq-question-5" type="button">
 <span>What happens after launch?</span>
 <span class="faq-icon">+</span>
 </button>
-<div class="faq-answer">
+<div aria-labelledby="faq-question-5" class="faq-answer" hidden id="faq-answer-5" role="region">
 <p>Small launch fixes are handled as agreed in the project scope. Ongoing maintenance, repeated content changes or larger new features can be handled separately.</p>
 </div>
 </div>
