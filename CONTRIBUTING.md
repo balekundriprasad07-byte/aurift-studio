@@ -1,40 +1,48 @@
 # Contributing to AURIFT°
 
-Thanks for your interest in contributing.
+Thanks for your interest in contributing to Aurift Studio.
 
-## Before you start
+Aurift is an experimental open-source digital studio project focused on cinematic web experiences, interaction design, accessibility and frontend performance.
 
-1. Check existing issues before creating a duplicate.
-2. For a larger change, open an issue first and describe what you want to change.
-3. Keep pull requests focused on one improvement.
+## Ways to Contribute
 
-## Local setup
+You can help by:
+
+- Reporting bugs
+- Suggesting improvements
+- Improving accessibility
+- Improving mobile responsiveness
+- Optimizing performance
+- Improving documentation
+- Fixing UI or interaction issues
+- Suggesting new concept experiences
+
+## Reporting a Bug
+
+Before creating an issue, check whether the problem has already been reported.
+
+When reporting a bug, include:
+
+- A clear description of the problem
+- Steps to reproduce it
+- Expected behavior
+- Actual behavior
+- Browser and device information
+- Screenshots or recordings when useful
+
+## Suggesting an Improvement
+
+Feature and improvement ideas are welcome.
+
+Please explain:
+
+- What you want to improve
+- Why the change would be useful
+- How it could improve the user or developer experience
+
+## Local Development
+
+Clone the repository:
 
 ```bash
-git clone <your-fork-url>
-cd aurift-studio
-python -m http.server 8000
-```
-
-Open `http://localhost:8000` in your browser.
-
-## Good first contributions
-
-- Improve mobile responsiveness
-- Improve keyboard navigation and accessibility
-- Reduce layout shift and animation cost
-- Add reduced-motion support
-- Improve documentation
-- Refactor reusable visual components
-- Test across browsers and screen sizes
-
-## Pull requests
-
-Include:
-
-- A clear summary of the change
-- Why the change is useful
-- Screenshots or recordings for visual changes
-- Any browser/device testing performed
-
-Please avoid unrelated formatting changes in the same pull request.
+git clone https://github.com/balekundriprasad07-byte/aurift-studio.git
